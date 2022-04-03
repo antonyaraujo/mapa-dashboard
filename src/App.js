@@ -18,8 +18,9 @@ export class MapContainer extends Component {
     });        
   };
 
-  /** Renderização do mapa e seus componentes */
-  render() {       
+  /** Renderização do mapa e seus componentes para carregamento no site*/
+  render() { 
+    document.title = "Mapa Dashboard"      
     return (        
       <div
       style={{
