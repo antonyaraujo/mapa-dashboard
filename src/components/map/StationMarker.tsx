@@ -31,15 +31,21 @@ export function StationMarker({ feature }: StationMarkerProps) {
 
   // Criar um ícone de "gota" dinâmico
   const customIcon = useMemo(() => {
-    const color = isSelected ? "hsl(var(--primary))" : "hsl(var(--foreground))";
-    const fill = isSelected ? "hsl(var(--primary))" : "none";
+    // Usar cores hexadecimais seguras pois variáveis CSS podem falhar dentro do Leaflet DOM
+    const color = isSelected ? "#2563eb" : "#64748b"; // blue-600 ou slate-500
+    const fill = isSelected ? "#3b82f6" : "none"; // blue-500 ou none
     const size = isSelected ? 32 : 24;
     
-    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="drop-shadow-md transition-transform hover:scale-110"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`;
+    // Importante passar width e height em style para sobrescrever qualquer CSS do leaflet
+    const svgIcon = `<div style="display: flex; justify-content: center; align-items: center; width: ${size}px; height: ${size}px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>
+      </svg>
+    </div>`;
 
     return L.divIcon({
       html: svgIcon,
-      className: "bg-transparent border-none outline-none",
+      className: "", // Deixamos vazio para não herdar estilos padrão indesejados
       iconSize: [size, size],
       iconAnchor: [size / 2, size],
       popupAnchor: [0, -size],
