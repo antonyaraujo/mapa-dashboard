@@ -4,6 +4,8 @@ import { Marker, Popup } from "react-leaflet";
 import { StationFeature } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import L from "leaflet";
+import { useMemo } from "react";
 
 interface StationMarkerProps {
   feature: StationFeature;
@@ -13,24 +15,42 @@ export function StationMarker({ feature }: StationMarkerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // O ID que estamos usando temporariamente pelas coordenadas
+  const stationId = `${feature.geometry.coordinates[1]},${feature.geometry.coordinates[0]}`;
+  const isSelected = searchParams.get("station") === stationId;
+
   const handleSelectStation = () => {
     const params = new URLSearchParams(searchParams.toString());
-    // Use coordinates as ID for now since there's no explicit ID in the feature
-    // In a real app we'd use feature.properties.code or similar
-    const stationId = `${feature.geometry.coordinates[1]},${feature.geometry.coordinates[0]}`;
     params.set("station", stationId);
     
-    // We update the URL without losing other query parameters (like year filters)
+    // We update the URL without losing other query parameters
     router.push(`/?${params.toString()}`, { scroll: false });
   };
 
   const [lng, lat] = feature.geometry.coordinates;
 
+  // Criar um ícone de "gota" dinâmico
+  const customIcon = useMemo(() => {
+    const color = isSelected ? "hsl(var(--primary))" : "hsl(var(--foreground))";
+    const fill = isSelected ? "hsl(var(--primary))" : "none";
+    const size = isSelected ? 32 : 24;
+    
+    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="drop-shadow-md transition-transform hover:scale-110"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`;
+
+    return L.divIcon({
+      html: svgIcon,
+      className: "bg-transparent border-none outline-none",
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size],
+      popupAnchor: [0, -size],
+    });
+  }, [isSelected]);
+
   return (
-    <Marker position={[lat, lng]}>
+    <Marker position={[lat, lng]} icon={customIcon}>
       <Popup>
         <div className="flex flex-col gap-2 p-1 max-w-[200px]">
-          <h3 className="font-bold text-sm">
+          <h3 className="font-bold text-sm leading-tight">
             {feature.properties.name || "Estação sem nome"}
           </h3>
           <div className="text-xs text-muted-foreground">
@@ -41,8 +61,9 @@ export function StationMarker({ feature }: StationMarkerProps) {
             size="sm" 
             onClick={handleSelectStation}
             className="w-full mt-2"
+            disabled={isSelected}
           >
-            Ver Detalhes
+            {isSelected ? "Selecionada" : "Ver Detalhes"}
           </Button>
         </div>
       </Popup>
