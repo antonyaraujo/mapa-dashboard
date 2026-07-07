@@ -138,7 +138,7 @@ export function StationDetailPanel() {
                   />
                   <Tooltip 
                     contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
-                    formatter={(value: number) => [`${value} mm`, "Precipitação"]}
+                    formatter={(value: any) => [`${value} mm`, "Precipitação"]}
                     labelFormatter={(label) => `Ano: ${label}`}
                   />
                   <Line 

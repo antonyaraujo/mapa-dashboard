@@ -37,7 +37,8 @@ export function SidebarFilters() {
     [searchParams]
   );
 
-  const handleCountryChange = (value: string) => {
+  const handleCountryChange = (value: string | null) => {
+    if (!value) return;
     router.push(pathname + "?" + createQueryString("country", value));
   };
 

@@ -2,6 +2,8 @@ import { MapContainer } from "@/components/map/MapContainer";
 import { SidebarFilters } from "@/components/panels/SidebarFilters";
 import { StationDetailPanel } from "@/components/panels/StationDetailPanel";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   return (
@@ -13,13 +15,17 @@ export default function Home() {
           <ThemeToggle />
         </div>
         <div className="flex-1 overflow-y-auto p-4">
-          <SidebarFilters />
+          <Suspense fallback={<Skeleton className="w-full h-32" />}>
+            <SidebarFilters />
+          </Suspense>
         </div>
       </div>
 
       {/* Área do Mapa */}
       <div className="flex-1 relative">
-        <MapContainer />
+        <Suspense fallback={<Skeleton className="w-full h-full" />}>
+          <MapContainer />
+        </Suspense>
         
         {/* Mobile Header / Overlays can go here */}
         <div className="md:hidden absolute top-4 right-4 z-[400] bg-background/80 backdrop-blur-md p-1 rounded-md shadow-md border">
@@ -28,7 +34,9 @@ export default function Home() {
       </div>
 
       {/* Painel de Detalhes da Estação (Deslizante / Fixo na direita) */}
-      <StationDetailPanel />
+      <Suspense fallback={null}>
+        <StationDetailPanel />
+      </Suspense>
     </main>
   );
 }
