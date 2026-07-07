@@ -46,6 +46,12 @@ export function SidebarFilters() {
     router.push(pathname);
   };
 
+  // Filtragem no Frontend para a contagem
+  const filteredStationsCount = stations?.features.filter((feature) => {
+    if (currentCountry === "all") return true;
+    return feature.properties.country === currentCountry;
+  }).length || 0;
+
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -92,7 +98,7 @@ export function SidebarFilters() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Total de estações: {isLoading ? <Skeleton className="inline-block w-8 h-4" /> : stations?.features.length}
+            Total de estações: {isLoading ? <Skeleton className="inline-block w-8 h-4" /> : filteredStationsCount}
           </p>
         </CardContent>
       </Card>

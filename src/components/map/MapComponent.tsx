@@ -18,17 +18,27 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+import { useSearchParams } from "next/navigation";
+
 export default function MapComponent() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { data: stations, isLoading } = useStations();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const currentCountry = searchParams.get("country") || "all";
   
+  // Filtragem no Frontend
+  const filteredStations = stations?.features.filter((feature) => {
+    if (currentCountry === "all") return true;
+    return feature.properties.country === currentCountry;
+  }) || [];
+
   // Tiles change based on theme
   const tileUrl =
     currentTheme === "dark"
@@ -52,7 +62,7 @@ export default function MapComponent() {
       >
         <TileLayer url={tileUrl} attribution={attribution} />
         
-        {stations?.features.map((feature, index) => (
+        {filteredStations.map((feature, index) => (
           <StationMarker key={`station-${index}`} feature={feature} />
         ))}
       </MapContainer>
