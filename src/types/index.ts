@@ -1,9 +1,11 @@
 export interface StationProperties {
-  isProjected: boolean;
+  isProjected?: boolean;
   name: string | null;
   country: string;
   responsible: string | null;
   network: string;
+  code?: string;
+  state?: string;
 }
 
 export interface StationFeature {
