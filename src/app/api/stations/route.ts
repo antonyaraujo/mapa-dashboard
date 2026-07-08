@@ -83,11 +83,28 @@ export async function GET() {
       path.join(jsonDirectory, "stations.json"),
       "utf8"
     );
-    const stations = JSON.parse(fileContents);
+    const mockData = JSON.parse(fileContents);
 
-    return NextResponse.json(stations, {
+    // Filtrar apenas o Brasil no fallback e limpar propriedades para simular a API da ANA
+    if (mockData.features) {
+      mockData.features = mockData.features.filter((f: any) => {
+        const country = f.properties.country || "";
+        return country.toLowerCase().includes("brasil");
+      });
+      
+      // Injetar dados simulados para permitir testes na UI de filtros
+      mockData.features.forEach((f: any, index: number) => {
+        f.properties.country = "Brasil";
+        f.properties.state = index % 2 === 0 ? "SP" : "RJ";
+        f.properties.basin = index % 3 === 0 ? "Bacia do Tietê" : "Bacia do Paraíba do Sul";
+        f.properties.river = index % 2 === 0 ? "Rio Tietê" : "Rio Paraíba do Sul";
+        f.properties.code = `MOCK-${index}`;
+      });
+    }
+
+    return NextResponse.json(mockData, {
       headers: {
-        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=43200",
+        "Cache-Control": "no-store, max-age=0", // Desabilitando cache para o dev visualizar rapidamente
       },
     });
   } catch (error) {
