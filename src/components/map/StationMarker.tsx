@@ -15,8 +15,8 @@ export function StationMarker({ feature }: StationMarkerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // O ID que estamos usando temporariamente pelas coordenadas
-  const stationId = `${feature.geometry.coordinates[1]},${feature.geometry.coordinates[0]}`;
+  // Agora temos um código da estação fornecido pelo backend
+  const stationId = feature.properties.code || `${feature.geometry.coordinates[1]},${feature.geometry.coordinates[0]}`;
   const isSelected = searchParams.get("station") === stationId;
 
   const handleSelectStation = () => {
