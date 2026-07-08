@@ -31,12 +31,16 @@ export default function MapComponent() {
   }, []);
 
   const currentTheme = theme === "system" ? resolvedTheme : theme;
-  const currentCountry = searchParams.get("country") || "all";
+  const currentState = searchParams.get("state") || "all";
+  const currentBasin = searchParams.get("basin") || "all";
+  const currentRiver = searchParams.get("river") || "all";
   
   // Filtragem no Frontend
   const filteredStations = stations?.features.filter((feature) => {
-    if (currentCountry === "all") return true;
-    return feature.properties.country === currentCountry;
+    if (currentState !== "all" && feature.properties.state !== currentState) return false;
+    if (currentBasin !== "all" && feature.properties.basin !== currentBasin) return false;
+    if (currentRiver !== "all" && feature.properties.river !== currentRiver) return false;
+    return true;
   }) || [];
 
   // Tiles change based on theme

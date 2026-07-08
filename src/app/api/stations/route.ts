@@ -47,6 +47,8 @@ export async function GET() {
                 network: "ANA", // Hardcoded temporário
                 country: "Brasil",
                 state: uf,
+                basin: s.BaciaCodigo || s.bacia || s.Bacia || s.SubBacia || "",
+                river: s.RioNome || s.rio || s.Rio || s.CorpoHidrico || "",
                 responsible: s.Responsavel || s.responsavel || "ANA",
               },
             }));

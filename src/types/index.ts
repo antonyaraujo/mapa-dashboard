@@ -6,6 +6,8 @@ export interface StationProperties {
   network: string;
   code?: string;
   state?: string;
+  basin?: string;
+  river?: string;
 }
 
 export interface StationFeature {
